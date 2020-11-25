@@ -1,5 +1,6 @@
 const { request, response } = require('express');
 const express = require('express');
+const { uuid } = require('uuidv4');
 
 const app = express();
 
@@ -21,36 +22,37 @@ app.use(express.json());
   * Route Params: Identificar os recursos (Atualizar/Deletar)
   * Request Body: Conteúdo na hora de criar ou editar um recurso (JSON)
   */
+const projects = [];
 
 app.get('/projects', (request, response) => {
-    const {title, owner} = request.query;
+   // const {title, owner} = request.query;
 
-    console.log(title);
-    console.log(owner);
+    //console.log(title);
+    //console.log(owner);
 
-    return response.json([
-        'Projeto 1',
-        'Projeto 2',
-    ]);
+    return response.json(projects);
 });
 
 app.post('/projects', (request, response) => {
     const {title, owner} = request.body;
 
-    console.log(title);
-    console.log(owner);
+    const project = { id: uuid(),title, owner };
 
-    return response.json([
-        'Projeto 1',
-        'Projeto 2',
-        'Projeto 3',
-    ]);
+
+    projects.push(project);
+
+    return response.json(project);
 });
 
 app.put('/projects/:id', (request, response) => {
     const { id } = request.params;
 
-    console.log(id);
+    const projectIndex = projects.findIndex(project => project.id === id);
+
+    if (projectIndex < 0){
+        return response.status(400).json({ error: 'Project not found.'})
+    }
+
 
     return response.json([
         'Projeto 4',
